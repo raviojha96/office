@@ -6,7 +6,7 @@ class Header extends React.Component {
             <header>
             <div id="header" className="clearfix">
                 <div className="col-sm-4 header-inner">
-                    <a className="nav-link sidebartoggler" href="javascript:void(0)"><i className="fas fa-bars"></i></a>
+                    <a className="nav-link sidebartoggler" href="#"><i className="fas fa-bars"></i></a>
                     <input type="text" name="search_name" placeholder="search & enter"/>
                 </div>
                 <div className="col-sm-8 notification-section">

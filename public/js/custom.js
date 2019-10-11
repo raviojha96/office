@@ -37,7 +37,6 @@ $(function () {
 
 
 $(function() {
-    console.log('hello world!');
     
     var e = function() {
         (window.innerWidth > 0 ? window.innerWidth : this.screen.width) < 1170 ? ($("body").addClass("mini-sidebar"), $(".navbar-brand span").hide(), $(".sidebartoggler i").addClass("ti-menu")) : ($("body").removeClass("mini-sidebar"), $(".navbar-brand span").show());
