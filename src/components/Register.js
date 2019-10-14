@@ -12,57 +12,6 @@ export default class Register extends Component {
       errors: {}
     };
   }
-
-  //validation
-  handleValidation = fieldName => {
-    const { fname, lname, email, password1, password2 } = this.state;
-    const errors = this.state.errors;
-    var isValid = true;
-
-    if (!fname) {
-      isValid = false;
-      errors.fname = "cannont be empty";
-    } else if (fname) {
-      if (!fname.match(/^[a-zA-Z]+$/)) {
-        isValid = false;
-        errors.fname = "Letters only";
-      }
-    }
-    if (!lname) {
-      isValid = false;
-      errors.lname = "cannont be empty";
-    } else if (lname) {
-      if (!lname.match(/^[a-zA-Z]+$/)) {
-        isValid = false;
-        errors.lname = "Letters only";
-      }
-    }
-    if (!email) {
-      isValid = false;
-      errors.email = "cannont be empty";
-    } else if (email) {
-      if (!email.match(/\S+@\S+\.\S+/)) {
-        isValid = false;
-        errors.email = "Invalid Email";
-      }
-    }
-    if (!password1) {
-      isValid = false;
-      errors.pass = "cannont be empty";
-    } else if (password1) {
-      if (!password1.match(/^[a-zA-Z0-9]+$/)) {
-        isValid = false;
-        errors.password1 = "Special charcters not allowed";
-      } else if (password1 !== password2) {
-        isValid = false;
-        errors.pass = "credentials not matched";
-      }
-    }
-
-    this.setState({ errors: errors });
-    return isValid;
-  };
-
   handleChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
@@ -93,9 +42,23 @@ export default class Register extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    if (!this.handleValidation()) {
+    if (
+      this.state.fname &&
+      this.state.lname &&
+      this.state.email &&
+      this.state.password1 &&
+      this.state.password2
+    ) {
+      const reqObj = {
+        fname: this.state.fname,
+        lname: this.state.lname,
+        email: this.state.email,
+        password1: this.state.password1,
+        password2: this.state.password2
+      };
+      console.log(reqObj);
     } else {
-      alert(this.state.fields.fname);
+      alert("Error: Please fill all the fields", this.state.errors);
     }
   };
 
@@ -108,7 +71,7 @@ export default class Register extends Component {
             validations={[
               { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
             ]}
-            onChange={this.handleChange}
+            handleChange={this.handleChange}
             id="fname"
             name="fname"
             placeholder="First Name"
@@ -121,11 +84,11 @@ export default class Register extends Component {
             validations={[
               { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
             ]}
-            onChange={this.handleChange}
+            handleChange={this.handleChange}
             id="lname"
             name="lname"
             placeholder="Last Name"
-            type="email"
+            type="text"
             className="form-control"
             errors={this.state.errors}
           />
@@ -138,11 +101,11 @@ export default class Register extends Component {
                 error: "email is incorrecrt"
               }
             ]}
-            onChange={this.handleChange}
+            handleChange={this.handleChange}
             id="email"
             name="email"
             placeholder="Email"
-            type="text"
+            type="email"
             className="form-control"
             errors={this.state.errors}
           />
@@ -154,41 +117,30 @@ export default class Register extends Component {
                 value: 8
               }
             ]}
-            onChange={this.handleChange}
+            handleChange={this.handleChange}
             id="password1"
             name="password1"
-            placeholder="password"
+            placeholder="Password"
             type="password"
             className="form-control"
             errors={this.state.errors}
           />
-          <div className="form-group row">
-            <label className="col-4"></label>
-            <div className="col-8">
-              <input
-                onChange={this.handleChange}
-                id="pass"
-                name="password1"
-                placeholder="Enter Your Password"
-                type="password"
-                className="form-control"
-              />
-              <span style={{ color: "red" }}>{this.state.errors.pass}</span>
-            </div>
-          </div>
-          <div className="form-group row">
-            <label className="col-4"></label>
-            <div className="col-8">
-              <input
-                id="pass"
-                name="password2"
-                placeholder="Repeat Your Password"
-                type="password"
-                className="form-control"
-              />
-              <span style={{ color: "red" }}>{this.state.errors.repass}</span>
-            </div>
-          </div>
+          <CustomInput
+            handleBlur={this.handleBlur}
+            validations={[
+              {
+                type: "minLength",
+                value: 8
+              }
+            ]}
+            handleChange={this.handleChange}
+            id="password2"
+            name="password2"
+            placeholder="Repeat Password"
+            type="password"
+            className="form-control"
+            errors={this.state.errors}
+          />
           <div className="form-group row">
             <div className="offset-4 col-8">
               <button name="submit" type="submit" className="btn btn-primary">

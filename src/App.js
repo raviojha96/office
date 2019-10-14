@@ -9,16 +9,26 @@ import Register from "./components/Register";
 
 import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 
+const Auth = true;
+
 function App() {
+  if (Auth) {
+    return (
+      <Router>
+        <div className="App">
+          <Route path="/login" component={Login} />
+        </div>
+      </Router>
+    );
+  } else {
+  }
   return (
     <Router>
       <div className="App">
-        <p>hello world</p>
         <Header />
         <Sidebar />
         <Route path="/profile" component={Profile} />
         <Route path="/password" component={Password} />
-        <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
         <Footer />
       </div>
