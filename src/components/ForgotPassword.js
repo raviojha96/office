@@ -3,7 +3,7 @@ import React, { Component } from "react";
 export default class Password extends Component {
   render() {
     return (
-      <div style={{margin:'70px'}}>
+      <div style={{ margin: '70px' }}>
         <div className="clearfix right-main-sectioan">
           <div className="col-xs-12 col-md-12 content-scroll-body">
             <div className="clearfix blank">

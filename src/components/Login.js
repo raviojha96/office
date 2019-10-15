@@ -1,61 +1,109 @@
 import React, { Component } from "react";
+import utils from '../utils';
+import { isEqual } from 'lodash';
 import CustomInput from "./common/textinput";
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
+    this.fields = [
+      {
+        id: 'email',
+        name: 'email',
+        stateName: 'email',
+        stateDefaultValue: '',
+        type: 'text',
+        label: 'email',
+        placeHolder: 'Please Enter Email',
+        isRequired: true,
+        className: 'form-control',
+        validations: [
+          {
+            type: "regex",
+            value: /\S+@\S+\.\S+/,
+            error: "email is incorrecrt"
+          }
+        ]
+      },
+      {
+        id: 'password',
+        name: 'password',
+        stateName: 'password',
+        stateDefaultValue: '',
+        type: 'password',
+        label: 'password',
+        isRequired: true,
+        placeHolder: 'Please Enter Password',
+        className: 'form-control',
+        validations: []
+      }
+    ]
     this.state = {
-      saveCredential: {
-        email: "raviojha@getMaxListeners.com",
+      correctCredentials: {
+        email: "ravi@gmail.com",
         password: "12345678"
       },
-      username: "",
-      password: "",
-      errors: {}
+      errors: {},
+      isSubmitDisabled: false
     };
+
+    this.fields.map(field => {
+      if (field.stateName) this.setState({ [field.stateName]: field.stateDefaultValue });
+    })
   }
 
-  componentDidMount() {
-    if (this.props.isAuthenticated) {
-      this.props.history.push("/dashboard");
-    }
-  }
-  handleBlur = (e, validations) => {
-    const errorMsgs = this.state.errors;
-    const fieldValue = e.target.value,
-      fieldName = e.target.name;
-    if (!fieldValue.trim()) {
-      errorMsgs[fieldName] = "cant be empty";
-      this.setState({ errors: errorMsgs });
-      return;
-    }
-    validations.reverse().forEach(validation => {
-      const { type, value, error } = validation;
-      if (type === "regex" && !fieldValue.match(value)) {
-        errorMsgs[fieldName] = `invalid ${fieldName}, ${error}`;
-      } else if (type === "minLength" && fieldValue.length < value) {
-        errorMsgs[
-          fieldName
-        ] = `${fieldName} should have atleast ${value} characters`;
-      } else {
-        errorMsgs[fieldName] = ``;
-      }
-    });
-    this.setState({ errors: errorMsgs });
+  handleChange = (stateName, value) => {
+    this.setState({ [stateName]: value });
   };
+
+  componentDidMount() {
+    const leftBar = document.querySelector("aside.left-sidebar")
+    if (leftBar) leftBar.style = "display:none;"
+    document.querySelector("body").style = "padding-left:0px;"
+  }
+  componentWillUnmount() {
+    const leftBar = document.querySelector("aside.left-sidebar")
+    if (leftBar) leftBar.style = "display:block;"
+    document.querySelector("body").style = "padding-left:250px;"
+  }
 
   handleSubmit = e => {
     e.preventDefault();
-    if (
-      this.state.username === this.state.saveCredential.username &&
-      this.state.password === this.state.saveCredential.password
-    ) {
-      this.props.changeAuthState(true);
-    }
+    const errors = utils.validateEntireDataset(this.fields, this.state);
+    this.setState({ errors: errors }, () => {
+      if (Object.values(this.state.errors).every(stateValue => stateValue === "")) { // error object has no error
+
+
+        const userObj = {
+          email: this.state.email,
+          password: this.state.password
+        }
+
+        if (isEqual(this.state.correctCredentials, userObj)) {
+          this.props.changeAuthState(userObj);
+          this.props.history.push("/profile");
+        }
+        else {
+          const errors = this.state.errors;
+          errors.password = 'Invalid Credentials';
+          this.setState({ errors: errors });
+        }
+      }
+    });
   };
+
+  onValidationError = ({ stateName, errorMessage }) => {
+    const errors = this.state.errors;
+    errors[stateName] = errorMessage;
+    this.setState({ errors });
+  }
+
   render() {
+    if (this.props.isAuthenticated) {
+      this.props.history.push("/profile");
+    }
     return (
-      <div>
+      <>
         <div className="clearfix page-xy-100 flexbox login-page">
           <div className="container align-items-center">
             <div className="col-md-12 justify-item-center">
@@ -63,54 +111,36 @@ export default class Login extends Component {
                 <div className="col-md-12 block-logo">
                   <img src="images/logo.png" className="center-block" />
                 </div>
-                <form action="">
+                {this.fields.map(field => (
                   <CustomInput
+                    key={field.id}
                     handleBlur={this.handleBlur}
-                    validations={[
-                      {
-                        type: "regex",
-                        value: /\S+@\S+\.\S+/,
-                        error: "email is incorrecrt"
-                      }
-                    ]}
                     handleChange={this.handleChange}
-                    id="email"
-                    name="email"
-                    placeholder="Email"
-                    type="email"
-                    className="form-control"
-                    errors={this.state.errors}
+                    onValidationError={this.onValidationError}
+                    stateObj={this.state}
+                    id={field.id}
+                    name={field.name}
+                    stateName={field.stateName}
+                    validations={field.validations}
+                    isRequired={field.isRequired}
+                    placeholder={field.placeHolder}
+                    type={field.type}
+                    className={field.className}
                   />
-                  <CustomInput
-                    handleBlur={this.handleBlur}
-                    validations={[
-                      {
-                        type: "minLength",
-                        value: 8
-                      }
-                    ]}
-                    handleChange={this.handleChange}
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    type="password"
-                    className="form-control"
-                    errors={this.state.errors}
-                  />
-                  <div className="checkbox">
-                    <label>
-                      <input type="checkbox" name="remember" /> Remember me
+                ))}
+                <div className="checkbox">
+                  <label>
+                    <input type="checkbox" name="remember" /> Remember me
                     </label>
-                  </div>
-                  <button type="submit" className="btn btn-default">
-                    Submit
+                </div>
+                <button type="submit" onClick={this.handleSubmit} disabled={this.state.isSubmitDisabled} className="btn btn-default">
+                  Submit
                   </button>
-                </form>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 }

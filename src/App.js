@@ -3,52 +3,58 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Profile from "./components/Profile";
 import Footer from "./components/Footer";
-import Password from "./components/Password";
+import ForgotPassword from "./components/ForgotPassword";
 import Login from "./components/Login";
 import Register from "./components/Register";
-
-import { Route, Link, BrowserRouter as Router } from "react-router-dom";
-
-const Auth = true;
+import { isEmpty } from "lodash"
+import { Route, HashRouter as Router } from "react-router-dom";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isAuthenticated: false
+      isAuthenticated: false,
+      authenticatedUser: null
     };
   }
   changeAuthState = data => {
-    this.setState({ isAuthenticated: data });
+    this.setState({ authenticatedUser: data, isAuthenticated: !isEmpty(data) });
   };
   render() {
     return (
-      <div>
+      <>
         <Router>
-          <div className="App">
-            if (isAuthenticated: false){" "}
-            {
-              <Route
-                exact
-                path="/login"
-                render={props => (
-                  <Login
-                    {...props}
-                    isAuthenticated={this.state.isAuthenticated}
-                    changeAuthState={this.changrAuthState}
-                  />
-                )}
+          <Route
+            exact
+            path={["/login"]}
+            render={props => (
+              <Login
+                {...props}
+                isAuthenticated={this.state.isAuthenticated}
+                changeAuthState={this.changeAuthState}
               />
-            }{" "}
-            {<Route exact path="/register" component={Register} />}
-            <Header />
-            <Sidebar />
-            <Route path="/profile" component={Profile} />
-            <Route path="/password" component={Password} />
-            <Footer />
-          </div>
+            )}
+          />
+          {<Route exact path="/register" render={props => (
+            <Register
+              {...props}
+              isAuthenticated={this.state.isAuthenticated}
+              changeAuthState={this.changeAuthState}
+            />
+          )} />}
+          <Header isAuthenticated={this.state.isAuthenticated} />
+          <Sidebar changeAuthState={this.changeAuthState} />
+          <Route exact path={["/profile", "/"]} render={props => (
+            <Profile
+              {...props}
+              isAuthenticated={this.state.isAuthenticated}
+              changeAuthState={this.changeAuthState}
+            />
+          )} />
+          <Route exact path="/forgotpassword" component={ForgotPassword} />
+          <Footer />
         </Router>
-      </div>
+      </>
     );
   }
 }

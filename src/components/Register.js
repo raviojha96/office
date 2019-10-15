@@ -1,72 +1,159 @@
 import React, { Component } from "react";
+import utils from '../utils';
 import CustomInput from "./common/textinput";
 export default class Register extends Component {
   constructor(props) {
     super(props);
+    this.fields = [
+      {
+        id: 'fname',
+        name: 'first name',
+        stateName: 'fname',
+        stateDefaultValue: '',
+        type: 'text',
+        label: 'fname',
+        placeHolder: 'Please Enter fname',
+        isRequired: true,
+        className: 'form-control',
+        validations: [
+          { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
+        ]
+      },
+      {
+        id: 'lname',
+        name: 'last name',
+        stateName: 'lname',
+        stateDefaultValue: '',
+        type: 'text',
+        label: 'lname',
+        placeHolder: 'Please Enter lname',
+        isRequired: true,
+        className: 'form-control',
+        validations: [
+          { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
+        ]
+      },
+      {
+        id: 'email',
+        name: 'email',
+        stateName: 'email',
+        stateDefaultValue: '',
+        type: 'text',
+        label: 'email',
+        placeHolder: 'Please Enter Email',
+        isRequired: true,
+        className: 'form-control',
+        validations: [
+          {
+            type: "regex",
+            value: /\S+@\S+\.\S+/,
+            error: "email is incorrecrt"
+          }
+        ]
+      },
+      {
+        id: 'password',
+        name: 'password',
+        stateName: 'password',
+        stateDefaultValue: '',
+        type: 'password',
+        label: 'password',
+        isRequired: true,
+        placeHolder: 'Please Enter Password',
+        className: 'form-control',
+        validations: [
+          {
+            type: "minLength",
+            value: 8
+          }
+        ]
+      },
+      {
+        id: 'password2',
+        name: 'confirm password',
+        stateName: 'password2',
+        stateDefaultValue: '',
+        type: 'password',
+        label: 'confirm password enter',
+        isRequired: true,
+        placeHolder: 'Please Confirm Password',
+        className: 'form-control',
+        validations: [
+          {
+            type: "equalToOtherField",
+            otherStateName: 'password',
+            otherFieldName: 'password'
+          }
+        ]
+      }
+    ]
     this.state = {
-      fname: "",
-      lname: "",
-      email: "",
-      password1: "",
-      password2: "",
       errors: {}
     };
+    this.fields.map(field => {
+      if (field.stateName) this.setState({ [field.stateName]: field.stateDefaultValue });
+    })
   }
-  handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleChange = (stateName, value) => {
+    this.setState({ [stateName]: value });
   };
 
-  handleBlur = (e, validations) => {
-    const errorMsgs = this.state.errors;
-    const fieldValue = e.target.value,
-      fieldName = e.target.name;
-    if (!fieldValue.trim()) {
-      errorMsgs[fieldName] = "cant be empty";
-      this.setState({ errors: errorMsgs });
-      return;
-    }
-    validations.reverse().forEach(validation => {
-      const { type, value, error } = validation;
-      if (type === "regex" && !fieldValue.match(value)) {
-        errorMsgs[fieldName] = `invalid ${fieldName}, ${error}`;
-      } else if (type === "minLength" && fieldValue.length < value) {
-        errorMsgs[
-          fieldName
-        ] = `${fieldName} should have atleast ${value} characters`;
-      } else {
-        errorMsgs[fieldName] = ``;
-      }
-    });
-    this.setState({ errors: errorMsgs });
-  };
+  componentDidMount() {
+    document.querySelector("aside.left-sidebar").style = "display:none;"
+    document.querySelector("body").style = "padding-left:0px;"
+  }
+  componentWillUnmount() {
+    document.querySelector("aside.left-sidebar").style = "display:block;"
+    document.querySelector("body").style = "padding-left:250px;"
+  }
+
+  onValidationError = ({ stateName, errorMessage }) => {
+    const errors = this.state.errors;
+    errors[stateName] = errorMessage;
+    this.setState({ errors });
+  }
 
   handleSubmit = e => {
     e.preventDefault();
-    if (
-      this.state.fname &&
-      this.state.lname &&
-      this.state.email &&
-      this.state.password1 &&
-      this.state.password2
-    ) {
-      const reqObj = {
-        fname: this.state.fname,
-        lname: this.state.lname,
-        email: this.state.email,
-        password1: this.state.password1,
-        password2: this.state.password2
-      };
-      console.log(reqObj);
-    } else {
-      alert("Error: Please fill all the fields", this.state.errors);
-    }
+    const errors = utils.validateEntireDataset(this.fields, this.state);
+    this.setState({ errors: errors }, () => {
+      if (Object.values(this.state.errors).every(stateValue => stateValue === "")) { // error object has no error
+        const reqObj = {
+          fname: this.state.fname,
+          lname: this.state.lname,
+          email: this.state.email,
+          password: this.state.password
+        };
+        console.log(reqObj);
+        alert("success check console");
+      }
+    });
   };
 
   render() {
+    // if (this.props.isAuthenticated) {
+    //   this.props.history.push("/profile");
+    // }
     return (
       <div style={{ margin: "60px" }}>
         <form onSubmit={this.handleSubmit}>
-          <CustomInput
+          {this.fields.map(field => (
+            <CustomInput
+              key={field.id}
+              handleChange={this.handleChange}
+              onValidationError={this.onValidationError}
+              stateObj={this.state}
+              id={field.id}
+              name={field.name}
+              stateName={field.stateName}
+              validations={field.validations}
+              isRequired={field.isRequired}
+              placeholder={field.placeHolder}
+              type={field.type}
+              className={field.className}
+            />
+          ))}
+          {/* <CustomInput
             handleBlur={this.handleBlur}
             validations={[
               { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
@@ -140,7 +227,7 @@ export default class Register extends Component {
             type="password"
             className="form-control"
             errors={this.state.errors}
-          />
+          /> */}
           <div className="form-group row">
             <div className="offset-4 col-8">
               <button name="submit" type="submit" className="btn btn-primary">

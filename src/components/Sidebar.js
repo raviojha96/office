@@ -59,9 +59,9 @@ class Sidebar extends React.Component {
                     <i className="icon-settings icon"></i> Account Setting
                   </Link>
 
-                  <Link to="/login" className="dropdown-item">
+                  <span onClick={() => this.props.changeAuthState()}>
                     <i className="fas fa-power-off icon"></i> Logout
-                  </Link>
+                  </span>
                 </div>
               </div>
             </div>
