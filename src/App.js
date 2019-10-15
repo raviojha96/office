@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import Profile from "./components/Profile";
@@ -11,29 +11,45 @@ import { Route, Link, BrowserRouter as Router } from "react-router-dom";
 
 const Auth = true;
 
-function App() {
-  if (Auth) {
-    return (
-      <Router>
-        <div className="App">
-          <Route path="/login" component={Login} />
-        </div>
-      </Router>
-    );
-  } else {
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isAuthenticated: false
+    };
   }
-  return (
-    <Router>
-      <div className="App">
-        <Header />
-        <Sidebar />
-        <Route path="/profile" component={Profile} />
-        <Route path="/password" component={Password} />
-        <Route path="/register" component={Register} />
-        <Footer />
+  changeAuthState = data => {
+    this.setState({ isAuthenticated: data });
+  };
+  render() {
+    return (
+      <div>
+        <Router>
+          <div className="App">
+            if (isAuthenticated: false){" "}
+            {
+              <Route
+                exact
+                path="/login"
+                render={props => (
+                  <Login
+                    {...props}
+                    isAuthenticated={this.state.isAuthenticated}
+                    changeAuthState={this.changrAuthState}
+                  />
+                )}
+              />
+            }{" "}
+            {<Route exact path="/register" component={Register} />}
+            <Header />
+            <Sidebar />
+            <Route path="/profile" component={Profile} />
+            <Route path="/password" component={Password} />
+            <Footer />
+          </div>
+        </Router>
       </div>
-    </Router>
-  );
+    );
+  }
 }
-
 export default App;

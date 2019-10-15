@@ -5,10 +5,20 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
+      saveCredential: {
+        email: "raviojha@getMaxListeners.com",
+        password: "12345678"
+      },
+      username: "",
       password: "",
       errors: {}
     };
+  }
+
+  componentDidMount() {
+    if (this.props.isAuthenticated) {
+      this.props.history.push("/dashboard");
+    }
   }
   handleBlur = (e, validations) => {
     const errorMsgs = this.state.errors;
@@ -33,6 +43,16 @@ export default class Login extends Component {
     });
     this.setState({ errors: errorMsgs });
   };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    if (
+      this.state.username === this.state.saveCredential.username &&
+      this.state.password === this.state.saveCredential.password
+    ) {
+      this.props.changeAuthState(true);
+    }
+  };
   render() {
     return (
       <div>
@@ -44,16 +64,6 @@ export default class Login extends Component {
                   <img src="images/logo.png" className="center-block" />
                 </div>
                 <form action="">
-                  {/* <div className="form-group">
-                    <label for="email">Email:</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      placeholder="Enter email"
-                      name="email"
-                    />
-                  </div> */}
                   <CustomInput
                     handleBlur={this.handleBlur}
                     validations={[
@@ -71,16 +81,6 @@ export default class Login extends Component {
                     className="form-control"
                     errors={this.state.errors}
                   />
-                  {/* <div className="form-group">
-                    <label for="pwd">Password:</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      id="pwd"
-                      placeholder="Enter password"
-                      name="pwd"
-                    />
-                  </div> */}
                   <CustomInput
                     handleBlur={this.handleBlur}
                     validations={[
