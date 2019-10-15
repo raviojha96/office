@@ -98,6 +98,8 @@ export default class Register extends Component {
     this.setState({ [stateName]: value });
   };
 
+  // to show hide sidebar
+  // start
   componentDidMount() {
     document.querySelector("aside.left-sidebar").style = "display:none;"
     document.querySelector("body").style = "padding-left:0px;"
@@ -106,6 +108,7 @@ export default class Register extends Component {
     document.querySelector("aside.left-sidebar").style = "display:block;"
     document.querySelector("body").style = "padding-left:250px;"
   }
+  //end
 
   onValidationError = ({ stateName, errorMessage }) => {
     const errors = this.state.errors;
@@ -136,6 +139,7 @@ export default class Register extends Component {
     // }
     return (
       <div style={{ margin: "60px" }}>
+        <h3> Register User </h3>
         <form onSubmit={this.handleSubmit}>
           {this.fields.map(field => (
             <CustomInput
@@ -153,81 +157,6 @@ export default class Register extends Component {
               className={field.className}
             />
           ))}
-          {/* <CustomInput
-            handleBlur={this.handleBlur}
-            validations={[
-              { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
-            ]}
-            handleChange={this.handleChange}
-            id="fname"
-            name="fname"
-            placeholder="First Name"
-            type="text"
-            className="form-control"
-            errors={this.state.errors}
-          />
-          <CustomInput
-            handleBlur={this.handleBlur}
-            validations={[
-              { type: "regex", value: /^[a-zA-Z]+$/, error: "Characters only" }
-            ]}
-            handleChange={this.handleChange}
-            id="lname"
-            name="lname"
-            placeholder="Last Name"
-            type="text"
-            className="form-control"
-            errors={this.state.errors}
-          />
-          <CustomInput
-            handleBlur={this.handleBlur}
-            validations={[
-              {
-                type: "regex",
-                value: /\S+@\S+\.\S+/,
-                error: "email is incorrecrt"
-              }
-            ]}
-            handleChange={this.handleChange}
-            id="email"
-            name="email"
-            placeholder="Email"
-            type="email"
-            className="form-control"
-            errors={this.state.errors}
-          />
-          <CustomInput
-            handleBlur={this.handleBlur}
-            validations={[
-              {
-                type: "minLength",
-                value: 8
-              }
-            ]}
-            handleChange={this.handleChange}
-            id="password1"
-            name="password1"
-            placeholder="Password"
-            type="password"
-            className="form-control"
-            errors={this.state.errors}
-          />
-          <CustomInput
-            handleBlur={this.handleBlur}
-            validations={[
-              {
-                type: "minLength",
-                value: 8
-              }
-            ]}
-            handleChange={this.handleChange}
-            id="password2"
-            name="password2"
-            placeholder="Repeat Password"
-            type="password"
-            className="form-control"
-            errors={this.state.errors}
-          /> */}
           <div className="form-group row">
             <div className="offset-4 col-8">
               <button name="submit" type="submit" className="btn btn-primary">
