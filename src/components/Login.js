@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import utils from '../utils';
-import { isEqual } from 'lodash';
+import utils from "../utils";
+import { isEqual } from "lodash";
 import CustomInput from "./common/textinput";
 
 export default class Login extends Component {
@@ -8,15 +8,15 @@ export default class Login extends Component {
     super(props);
     this.fields = [
       {
-        id: 'email',
-        name: 'email',
-        stateName: 'email',
-        stateDefaultValue: '',
-        type: 'text',
-        label: 'email',
-        placeHolder: 'Please Enter Email',
+        id: "email",
+        name: "email",
+        stateName: "email",
+        stateDefaultValue: "",
+        type: "text",
+        label: "email",
+        placeHolder: "Please Enter Email",
         isRequired: true,
-        className: 'form-control',
+        className: "form-control",
         validations: [
           {
             type: "regex",
@@ -26,18 +26,18 @@ export default class Login extends Component {
         ]
       },
       {
-        id: 'password',
-        name: 'password',
-        stateName: 'password',
-        stateDefaultValue: '',
-        type: 'password',
-        label: 'password',
+        id: "password",
+        name: "password",
+        stateName: "password",
+        stateDefaultValue: "",
+        type: "password",
+        label: "password",
         isRequired: true,
-        placeHolder: 'Please Enter Password',
-        className: 'form-control',
+        placeHolder: "Please Enter Password",
+        className: "form-control",
         validations: []
       }
-    ]
+    ];
     this.state = {
       correctCredentials: {
         email: "ravi@gmail.com",
@@ -48,8 +48,9 @@ export default class Login extends Component {
     };
 
     this.fields.map(field => {
-      if (field.stateName) this.setState({ [field.stateName]: field.stateDefaultValue });
-    })
+      if (field.stateName)
+        this.setState({ [field.stateName]: field.stateDefaultValue });
+    });
   }
 
   handleChange = (stateName, value) => {
@@ -57,35 +58,36 @@ export default class Login extends Component {
   };
 
   componentDidMount() {
-    const leftBar = document.querySelector("aside.left-sidebar")
-    if (leftBar) leftBar.style = "display:none;"
-    document.querySelector("body").style = "padding-left:0px;"
+    const leftBar = document.querySelector("aside.left-sidebar");
+    if (leftBar) leftBar.style = "display:none;";
+    document.querySelector("body").style = "padding-left:0px;";
   }
   componentWillUnmount() {
-    const leftBar = document.querySelector("aside.left-sidebar")
-    if (leftBar) leftBar.style = "display:block;"
-    document.querySelector("body").style = "padding-left:250px;"
+    const leftBar = document.querySelector("aside.left-sidebar");
+    if (leftBar) leftBar.style = "display:block;";
+    document.querySelector("body").style = "padding-left:250px;";
   }
 
   handleSubmit = e => {
     e.preventDefault();
     const errors = utils.validateEntireDataset(this.fields, this.state);
     this.setState({ errors: errors }, () => {
-      if (Object.values(this.state.errors).every(stateValue => stateValue === "")) { // error object has no error
-
+      if (
+        Object.values(this.state.errors).every(stateValue => stateValue === "")
+      ) {
+        // error object has no error
 
         const userObj = {
           email: this.state.email,
           password: this.state.password
-        }
+        };
 
         if (isEqual(this.state.correctCredentials, userObj)) {
           this.props.changeAuthState(userObj);
           this.props.history.push("/profile");
-        }
-        else {
+        } else {
           const errors = this.state.errors;
-          errors.password = 'Invalid Credentials';
+          errors.password = "Invalid Credentials";
           this.setState({ errors: errors });
         }
       }
@@ -96,7 +98,7 @@ export default class Login extends Component {
     const errors = this.state.errors;
     errors[stateName] = errorMessage;
     this.setState({ errors });
-  }
+  };
 
   render() {
     if (this.props.isAuthenticated) {
@@ -131,11 +133,16 @@ export default class Login extends Component {
                 <div className="checkbox">
                   <label>
                     <input type="checkbox" name="remember" /> Remember me
-                    </label>
+                  </label>
                 </div>
-                <button type="submit" onClick={this.handleSubmit} disabled={this.state.isSubmitDisabled} className="btn btn-default">
+                <button
+                  type="submit"
+                  onClick={this.handleSubmit}
+                  disabled={this.state.isSubmitDisabled}
+                  className="btn btn-default"
+                >
                   Submit
-                  </button>
+                </button>
               </div>
             </div>
           </div>

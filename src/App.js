@@ -16,6 +16,7 @@ class App extends Component {
       isAuthenticated: false,
       authenticatedUser: null
     };
+    
   }
   changeAuthState = data => {
     this.setState({ authenticatedUser: data, isAuthenticated: !isEmpty(data) });
